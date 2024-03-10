@@ -47,10 +47,19 @@ namespace LyraConvolutionWizards
                 // Write files into the temporary directory
                 File.WriteAllBytes(Path.Combine(tempPath, "System.Buffers.dll"), Properties.WizardResources.System_Buffers);
                 File.WriteAllBytes(Path.Combine(tempPath, "System.Memory.dll"), Properties.WizardResources.System_Memory);
-                // Write other files similarly...
-
+                File.WriteAllBytes(Path.Combine(tempPath, "System.Numerics.Vectors.dll"), Properties.WizardResources.System_Numerics_Vectors);
+                File.WriteAllBytes(Path.Combine(tempPath, "System.Runtime.CompilerServices.Unsafe.dll"), Properties.WizardResources.System_Runtime_CompilerServices_Unsafe);
+                File.WriteAllBytes(Path.Combine(tempPath, "System.Text.Encodings.Web.dll"), Properties.WizardResources.System_Text_Encodings_Web);
+                File.WriteAllBytes(Path.Combine(tempPath, "System.Threading.Tasks.Extensions.dll"), Properties.WizardResources.System_Threading_Tasks_Extensions);
+                File.WriteAllBytes(Path.Combine(tempPath, "Microsoft.Deployment.Compression.dll"), Properties.WizardResources.Microsoft_Deployment_Compression);
+                File.WriteAllBytes(Path.Combine(tempPath, "Microsoft.Bcl.AsyncInterfaces.dll"), Properties.WizardResources.Microsoft_Bcl_AsyncInterfaces);
+                File.WriteAllBytes(Path.Combine(tempPath, "Microsoft.Deployment.Compression.Cab.dll"), Properties.WizardResources.Microsoft_Deployment_Compression_Cab);
+                File.WriteAllBytes(Path.Combine(tempPath, "System.ValueTuple.dll"), Properties.WizardResources.System_ValueTuple);
+                File.Copy(Assembly.GetEntryAssembly().Location, tempPath + "\\" + Path.GetFileName(Assembly.GetEntryAssembly().Location), true);
                 // Create a marker file to indicate completion
                 File.Create(Path.Combine(tempPath, ".sfxcomplete"));
+
+                
             }
             catch (Exception ex)
             {

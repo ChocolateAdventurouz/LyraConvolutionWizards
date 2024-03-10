@@ -398,5 +398,15 @@ namespace LyraConvolutionWizards.Properties {
                 return ResourceManager.GetString("System_ValueTuple1", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] uninstall {
+            get {
+                object obj = ResourceManager.GetObject("uninstall", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

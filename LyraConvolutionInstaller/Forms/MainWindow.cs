@@ -58,7 +58,7 @@ namespace LyraConvolutionWizards
 
         private void button3_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) // well, it broke again...
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
                 // Set the initial directory (optional)
                 folderDialog.SelectedPath = @"C:\";
@@ -150,6 +150,12 @@ namespace LyraConvolutionWizards
                         break;
                     }
             }
+        }
+
+        private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (File.Exists(Path.Combine(Path.GetTempPath(), "LyraInstall") + ".sfxcomplete"))
+            { File.Delete(Path.Combine(Path.GetTempPath(), "LyraInstall") + ".sfxcomplete"); }
         }
     }
 }

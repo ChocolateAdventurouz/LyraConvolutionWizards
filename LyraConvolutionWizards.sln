@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LyraConvolutionInstaller", "LyraConvolutionInstaller\LyraConvolutionInstaller.csproj", "{2C9BA2EF-10A8-4266-86E0-CFA7D12122AA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3FCB2B33-ECBB-4DB4-BCF3-0E0A9EBE58FB} = {3FCB2B33-ECBB-4DB4-BCF3-0E0A9EBE58FB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LyraConvolutionUninstaller", "LyraConvolutionUninstaller\LyraConvolutionUninstaller.csproj", "{3FCB2B33-ECBB-4DB4-BCF3-0E0A9EBE58FB}"
 EndProject

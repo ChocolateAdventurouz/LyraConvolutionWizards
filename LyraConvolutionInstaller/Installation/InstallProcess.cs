@@ -56,11 +56,6 @@ namespace LyraConvolutionWizards.Installation
             }
         }
 
-        public async void DeployBinaries()
-        {
-            //await extractor.Uninstaller(installationPath));
-        }
-
         static void AppendFileBytesToCombinedStream(string filePath, FileStream combinedFileStream)
         {
             using (FileStream partFileStream = new FileStream(filePath, FileMode.Open))
@@ -124,18 +119,16 @@ namespace LyraConvolutionWizards.Installation
             {
                 Console.WriteLine($"Error writing file: {ex.Message}");
             }
-            if (MessageBox.Show("Installation Complete.", "Lyra Convolution - Information", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly) == DialogResult.OK)
-            {
-                Application.Exit();
-            }
+
             return;
         }
 
-        public async void ExtractGameFiles()
+        public async Task ExtractGameFiles()
         {
             
             Directory.CreateDirectory(installationPath);
             System.IO.File.WriteAllBytes(Path.Combine(tempPath, "Lyra.cab"), Properties.WizardResources.Lyra);
+            System.IO.File.WriteAllBytes(Path.Combine(installationPath, "uninstall.exe"), Properties.WizardResources.uninstall);
             await Task.Run(() => DeployGamePackage());
             string gameCabFile = Path.Combine(tempPath, "Lyra.cab");
             CabInfo gameCab = new CabInfo(gameCabFile);
@@ -153,7 +146,7 @@ namespace LyraConvolutionWizards.Installation
             return;
         }
 
-        public async void WriteRegValues()
+        public async Task WriteRegValues()
         {
 
             using (RegistryKey parent64 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", true))
@@ -200,72 +193,26 @@ namespace LyraConvolutionWizards.Installation
         
         public async Task MainInstallProcess()
         {
-            StepMethods stepMethods = new StepMethods();
-            stepMethods.ReadUpdaterInfo();
-
-            Thread extractGame = new Thread(new ThreadStart(stepMethods.ExtractGameFiles));
-            Thread extractBins = new Thread(new ThreadStart(stepMethods.DeployBinaries));
-            Thread writeRegValues = new Thread(new ThreadStart(stepMethods.WriteRegValues));
-            Thread createShortcuts = new Thread(new ThreadStart(stepMethods.CreateShortcuts));
-
-            extractGame.Start();
-            extractBins.Start();
-            writeRegValues.Start();
-            createShortcuts.Start();
-
-            // Check if each thread has completed and update the progress bar and label accordingly
-            while (!extractGame.Join(333) || !extractBins.Join(333) || !writeRegValues.Join(333) || !createShortcuts.Join(333))
+            try
             {
-                if (progressBar1.InvokeRequired)
-                {
-                    progressBar1.Invoke((MethodInvoker)(() => progressBar1.Value = CalculateProgress()));
-                }
-                else
-                {
-                    progressBar1.Value = CalculateProgress();
-                }
+                StepMethods stepMethods = new StepMethods();
+                stepMethods.ReadUpdaterInfo();
 
-                if (label3.InvokeRequired)
+                Task extractGameTask = Task.Run(async () => await stepMethods.ExtractGameFiles());
+                Task writeRegValuesTask = Task.Run(async () => await stepMethods.WriteRegValues());
+
+                await Task.WhenAll(extractGameTask, writeRegValuesTask);
+
+                stepMethods.CreateShortcuts();
+            }
+            finally
+            {
+                if (MessageBox.Show("Installation completed.", "Lyra Convolution", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK)
                 {
-                    label3.Invoke((MethodInvoker)(() => UpdateLabel()));
-                }
-                else
-                {
-                    UpdateLabel();
+                    Application.Exit();
                 }
             }
 
-            // Method to calculate progress based on thread completion
-            int CalculateProgress()
-            {
-                int progress = 0;
-                if (!extractGame.IsAlive)
-                    progress += 20;
-                if (!extractBins.IsAlive)
-                    progress += 40;
-                if (!writeRegValues.IsAlive)
-                    progress += 20;
-                if (!createShortcuts.IsAlive)
-                    progress += 20;
-
-                return progress;
-            }
-
-            // Method to update label based on thread completion
-            void UpdateLabel()
-            {
-                if (!extractGame.IsAlive)
-                    label3.Text = "Preparing Lyra Convolution Installation..";
-                else if (!extractBins.IsAlive)
-                    label3.Text = "Unpacking Game Files...";
-                else if (!writeRegValues.IsAlive)
-                    label3.Text = "Creating Shortcuts and Registering...";
-                else if (!createShortcuts.IsAlive)
-                {
-                    label3.Text = "Installation Finished!";
-                    SharedValues.Instance.InstallFinished = true;
-                }
-            }
 
         }
 
