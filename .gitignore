@@ -376,3 +376,4 @@ LyraConvolutionInstaller/Resources/pakchunk0-Windows.partcc
 /LyraConvolutionInstaller/Resources/pakchunk0-Windows.partab
 *.config
 /LyraConvolutionInstaller/Resources/uninstall.exe
+/Output/install_lyraconvolution.exe
